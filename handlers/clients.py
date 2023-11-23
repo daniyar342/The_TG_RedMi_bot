@@ -64,12 +64,6 @@ async def get_phones(callback_query: types.CallbackQuery, state: FSMContext):
     await show_link(callback_query.message, state)
 
 
-# @dp.message_handler(Command("start"))
-# async def start(message: types.Message, state: FSMContext):
-#     await state.finish()
-#     await state.update_data(link_index=0)  # Start with the first link
-#     return await show_link(message, state)
-
 async def filtered(message: types.Message):
     user_input = message.text.lower()  # Convert user input to lowercase for easier comparison
 
@@ -85,11 +79,9 @@ async def filtered(message: types.Message):
         # Handle unrecognized commands or messages
         await message.answer("I'm not sure what you want. Please use valid commands.")
 
-# ...
 
-# Register the message handler for the "filtered" command
 
-# @dp.callback_query_handler(lambda callback_query: callback_query.data in ["next", "prev"])
+
 async def paginate_links(callback_query: types.CallbackQuery, state: FSMContext):
     data = await state.get_data()
     link_index = data.get("link_index")
@@ -106,6 +98,7 @@ async def paginate_links(callback_query: types.CallbackQuery, state: FSMContext)
     await delete_previous_message(callback_query.message)
     await show_link(callback_query.message, state)
     return await callback_query.answer()
+
 
 async def show_link(message: types.Message, state: FSMContext):
     data = await state.get_data()
@@ -131,8 +124,6 @@ async def show_link(message: types.Message, state: FSMContext):
     previous_messages[message.chat.id] = new_message.message_id
 
 
-# @dp.callback_query_handler(lambda callback_query: callback_query.data == "add_to_cart")
-# Define cart as a list of tuples where each tuple contains (product link, quantity)
 cart = []
 
 
@@ -195,6 +186,8 @@ async def buy_product(callback_query: types.CallbackQuery, state: FSMContext):
         keyboard.add(button1, button2)
 
         await bot.send_message(callback_query.message.chat.id, cart_text, reply_markup=keyboard)
+
+
 async def view_cart(message: types.Message):
     button1 = InlineKeyboardButton("Купить Товар", callback_data="BUY")
     keyboard = InlineKeyboardMarkup()
@@ -206,6 +199,7 @@ async def view_cart(message: types.Message):
         cart_items = [f"{link}: {quantity}" for link, quantity in cart]
         cart_text = "\n".join(cart_items)
         await message.answer(f"Содержимое корзины:\n{cart_text}", reply_markup=keyboard)
+
 
 async def delete_previous_message(message: types.Message):
     chat_id = message.chat.id
